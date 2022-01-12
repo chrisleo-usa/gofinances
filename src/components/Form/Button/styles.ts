@@ -8,7 +8,8 @@ export const Container = styled(TouchableOpacity)`
   
   padding: 18px;
 
-  background-color: ${({ theme }) => theme.colors.secondary};
+  background-color: ${({ theme, disabled }) => 
+    disabled ? theme.colors.secondary_light : theme.colors.secondary};
   border-radius: 5px;
 `;
 
