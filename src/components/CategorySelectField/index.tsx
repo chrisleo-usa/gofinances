@@ -5,13 +5,14 @@ import {
   Icon,
 } from './styles'
 
-interface CategorySelectProps {
+interface CategorySelectFieldProps {
   title: string;
+  onPress: () => void;
 }
 
-export const CategorySelect = ({ title }: CategorySelectProps) => {
+export const CategorySelectField = ({ title, onPress }: CategorySelectFieldProps) => {
   return (
-    <Container>
+    <Container onPress={onPress}>
       <Category>
         {title}
       </Category>

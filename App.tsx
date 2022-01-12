@@ -8,7 +8,7 @@ import {
 } from '@expo-google-fonts/poppins'
 
 import { ThemeProvider } from 'styled-components/native'
-import { CategorySelect } from './src/screens/CategorySelect';
+import { Register } from './src/screens/Register';
 
 import theme from './src/global/styles/theme'
 import AppLoading from 'expo-app-loading';
@@ -26,7 +26,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CategorySelect />
+      <Register />
     </ThemeProvider>
   );
 }
