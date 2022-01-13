@@ -1,16 +1,14 @@
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native'
 import { Feather } from '@expo/vector-icons'
-
-//Não necessário para android 9+ => Em androids mais antigos, pode ser que o Botão de selecionar categoria ao ser apertado, não feche a Modal. Isso pq ele precisa que o estilo dele seja um específico. Para isso será necessário importar da lib react-native-gesture-handler o tipo GestureHandlerRootView e no lugar da View do Container nós colocamos styled(GestureHandlerRootView), dessa forma funcionará. Este tipo é responsável por preservar o nosso component e garantindo o comportamento natural. 
-//import {GestureHandlerRootView} from 'react-native-gesture-handler'
-//ex: export const Container = styled(GestureHandlerRootView)
+import {GestureHandlerRootView} from 'react-native-gesture-handler'
+// necessário importar da lib react-native-gesture-handler o tipo GestureHandlerRootView e no lugar da View do Container nós colocamos styled(GestureHandlerRootView), dessa forma funcionará a seleção da categoria. Este tipo é responsável por preservar o nosso component e garantindo o comportamento natural. 
 
 interface CategoryProps {
   isActive: boolean;
 }
 
-export const Container = styled.View`
+export const Container = styled(GestureHandlerRootView)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
 `;
