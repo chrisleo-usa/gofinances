@@ -1,12 +1,7 @@
-interface CategoryProps {
-  name: string;
-  icon: string;
-}
-
 export interface TransactionCardData {
   type: 'positive' | 'negative'
-  title: string;
+  name: string;
   amount: string;
-  category: CategoryProps;
+  category: string;
   date: string;
 }

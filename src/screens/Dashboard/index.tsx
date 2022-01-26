@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { HighlightCard } from '../../components/HighlightCard';
 import { TransactionCard } from '../../components/TransactionCard';
@@ -19,48 +20,55 @@ import {
   TransactionList,
   LogoutButton
 } from './styles';
+import { useFocusEffect } from '@react-navigation/native';
 
 export interface DataListProps extends TransactionCardData {
   id: string;
 }
 
 export const Dashboard = () => {
-  const data: DataListProps[] = [
-    {
-      id: '1',
-      type: 'positive',
-      title:"Desenvolvimento de site",
-      amount:"R$ 12.000,00",
-      category:{
-        name: "Vendas",
-        icon: "dollar-sign"
-      },
-      date:"13/04/2020",
-    },
-    {
-      id: '2',
-      type: 'negative',
-      title:"Hamburgueria Pizzy",
-      amount:"R$ 59,00",
-      category:{
-        name: "Alimentação",
-        icon: "coffee"
-      },
-      date:"13/04/2020",
-    },
-    {
-      id: '3',
-      type: 'negative',
-      title:"Aluguel do apartamento",
-      amount:"R$ 1.200,00",
-      category:{
-        name: "Casa",
-        icon: "shopping-bag"
-      },
-      date:"13/04/2020",
-    }
-  ];
+  const [data, setData] = useState<DataListProps[]>()
 
+  const loadTransactions = async() => {
+    const dataKey = '@gofinances:transactions'
+    const response = await AsyncStorage.getItem(dataKey)
+    const transactions = response ? JSON.parse(response) : []
+
+    const transactionsFormatted: DataListProps[] = transactions.map((item: DataListProps) => {
+      const amount = Number(item.amount).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      })
+
+      const date = Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: '2-digit'
+      }).format(new Date(item.date))
+
+      return {
+        id: item.id,
+        name: item.name,
+        amount: amount,
+        type: item.type,
+        category: item.category,
+        date: date
+      }
+
+    })
+    setData(transactionsFormatted)
+  }
+  useEffect(() => {
+    loadTransactions()
+  }, [data]) // qual melhor? utilizar o useFocusEffect ou deixar o data no parametro do useEffect?
+
+  //Solução 2:
+  // useEffect(() => {
+  //   loadTransactions()
+  // }, []) 
+  // useFocusEffect(useCallback(() => {
+  //   loadTransactions()
+  // }, []))
   return (
     <Container>
       <Header>
@@ -95,8 +103,6 @@ export const Dashboard = () => {
           renderItem={({ item }) => <TransactionCard data={item} />}
 
         />
-
-        {/* <TransactionCard data={data[0]} /> */}
       </Transactions> 
 
     </Container>

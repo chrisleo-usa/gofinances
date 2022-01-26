@@ -1,5 +1,6 @@
 import React from 'react';
-
+import 'intl';
+import 'intl/locale-data/jsonp/pt-BR'
 import { 
   useFonts, 
   Poppins_400Regular, 
@@ -11,8 +12,6 @@ import { ThemeProvider } from 'styled-components/native'
 import { NavigationContainer } from '@react-navigation/native'
 
 import { AppRoutes } from './src/routes/app.routes'
-
-import { Register } from './src/screens/Register';
 
 import theme from './src/global/styles/theme'
 import AppLoading from 'expo-app-loading';
