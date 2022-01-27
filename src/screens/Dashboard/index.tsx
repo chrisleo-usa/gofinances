@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { HighlightCard } from '../../components/HighlightCard';
 import { TransactionCard } from '../../components/TransactionCard';
 import { TransactionCardData } from '../../components/TransactionCard/types';
@@ -20,21 +20,40 @@ import {
   TransactionList,
   LogoutButton
 } from './styles';
-import { useFocusEffect } from '@react-navigation/native';
+
+interface HighlightProps {
+  amount: string;
+}
+interface HighlightData {
+  entries: HighlightProps;
+  expensives: HighlightProps;
+  total: HighlightProps;
+}
 
 export interface DataListProps extends TransactionCardData {
   id: string;
 }
 
 export const Dashboard = () => {
-  const [data, setData] = useState<DataListProps[]>()
+  const [transactions, setTransactions] = useState<DataListProps[]>()
+  const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData)
 
   const loadTransactions = async() => {
     const dataKey = '@gofinances:transactions'
     const response = await AsyncStorage.getItem(dataKey)
     const transactions = response ? JSON.parse(response) : []
 
+    let entriesTotal = 0;
+    let expensivesTotal = 0;
+
     const transactionsFormatted: DataListProps[] = transactions.map((item: DataListProps) => {
+
+      if (item.type === 'positive') {
+        entriesTotal += Number(item.amount)
+      } else {
+        expensivesTotal += Number(item.amount)
+      }
+
       const amount = Number(item.amount).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL'
@@ -56,19 +75,43 @@ export const Dashboard = () => {
       }
 
     })
-    setData(transactionsFormatted)
+    console.log("entriesTotal", entriesTotal)
+
+    const total = entriesTotal - expensivesTotal
+    setTransactions(transactionsFormatted)
+    console.log("entries", transactionsFormatted)
+    setHighlightData({
+      entries: {
+        amount: entriesTotal.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+      },
+      expensives: {
+        amount: expensivesTotal.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+      },
+      total: {
+        amount: total.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }),
+      }
+    })
+    console.log("ENTRADAS", highlightData.entries.amount)
+    console.log("SAÍDAS", highlightData.expensives.amount)
   }
+
   useEffect(() => {
     loadTransactions()
-  }, [data]) // qual melhor? utilizar o useFocusEffect ou deixar o data no parametro do useEffect?
+  }, []) 
 
-  //Solução 2:
-  // useEffect(() => {
-  //   loadTransactions()
-  // }, []) 
-  // useFocusEffect(useCallback(() => {
-  //   loadTransactions()
-  // }, []))
+  useFocusEffect(useCallback(() => {
+    loadTransactions()
+  }, []))
+
   return (
     <Container>
       <Header>
@@ -89,19 +132,18 @@ export const Dashboard = () => {
 
       <HighlightCards
       >
-        <HighlightCard title="Entradas" amount="R$17.400,00" lastTransaction="Última entrada dia 13 de abril" type="up" />
-        <HighlightCard title="Saídas" amount="R$ 1.259,00" lastTransaction="Última saída dia 03 de abril" type="down" />
-        <HighlightCard title="Total" amount="R$ 16.141,00" lastTransaction="01 à 16 de abril" type="total" />
+        <HighlightCard title="Entradas" amount={highlightData.entries.amount} lastTransaction="Última entrada dia 13 de abril" type="up" />
+        <HighlightCard title="Saídas" amount={highlightData.expensives.amount} lastTransaction="Última saída dia 03 de abril" type="down" />
+        <HighlightCard title="Total" amount={highlightData.total.amount} lastTransaction="01 à 16 de abril" type="total" />
       </HighlightCards>
 
       <Transactions>
         <Title>Listagem</Title>
 
         <TransactionList 
-          data={data}
+          data={transactions}
           keyExtractor={item => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
-
         />
       </Transactions> 
 
