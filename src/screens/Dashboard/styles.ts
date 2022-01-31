@@ -100,3 +100,9 @@ export const TransactionList = styled(
     }
   })`
 `;
+
+export const Loader = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
