@@ -195,9 +195,6 @@ export const Dashboard = () => {
             </Transactions> 
           </>
       }
-      
-      
-
     </Container>
   )
 }
