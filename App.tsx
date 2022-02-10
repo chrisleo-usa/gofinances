@@ -9,13 +9,12 @@ import {
 } from '@expo-google-fonts/poppins'
 import { StatusBar } from 'react-native'
 import { ThemeProvider } from 'styled-components/native'
-import { NavigationContainer } from '@react-navigation/native'
 
-import { AppRoutes } from './src/routes/app.routes'
-
+import { Routes } from './src/routes/index'
 import theme from './src/global/styles/theme'
 import AppLoading from 'expo-app-loading';
-import { SignIn } from './src/screens/SignIn';
+
+import { AuthProvider } from './src/hooks/auth'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -30,10 +29,10 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
         <StatusBar barStyle="light-content" />
-        <SignIn />
-      </NavigationContainer>
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
     </ThemeProvider>
   );
 }
