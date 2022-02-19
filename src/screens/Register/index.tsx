@@ -3,6 +3,7 @@ import { Modal, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useAuth } from '../../hooks/auth'
 import uuid from 'react-native-uuid'
 import { useNavigation } from '@react-navigation/native'
 import { useForm } from 'react-hook-form' 
@@ -33,6 +34,7 @@ const schema = Yup.object({
 })
 
 export const Register = () => {
+  const { user } = useAuth()
   const [transactionType, setTransactionType] = useState('')
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [category, setCategory] = useState({
@@ -42,7 +44,7 @@ export const Register = () => {
 
   const navigation = useNavigation();
 
-  const dataKey = '@gofinances:transactions'
+  const dataKey = `@gofinances:transactions_user:${user.id}`
 
   const {
     control, //responsável por controlar cada input e não ficar atualizando toda vez o seu estado, fazendo o form ser mais performático
