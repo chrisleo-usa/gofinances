@@ -95,7 +95,7 @@ export const Register = () => {
         key: 'category',
         name: 'Categoria'
       })
-      navigation.navigate('Listagem')
+      navigation.navigate({ key: 'Listagem' })
       
       Alert.alert('Registro realizado com sucesso.')
     } catch (error) {
@@ -147,6 +147,7 @@ export const Register = () => {
             </TransactionsTypes>
 
             <CategorySelectField 
+              testID='button-category'
               title={category.name} 
               onPress={handleOpenSelectCategoryModal}
             />
@@ -160,6 +161,7 @@ export const Register = () => {
         </Form>
 
         <Modal 
+          testID='modal-category'
           visible={categoryModalOpen}
         >
           <CategorySelect 
